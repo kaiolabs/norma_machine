@@ -6,6 +6,7 @@ import 'package:norma_machine/src/modules/home/controller/home_controller.dart';
 import 'package:norma_machine/src/modules/home/models/home_view_model.dart';
 import 'package:norma_machine/src/modules/home/views/components/execution_result_card.dart';
 import 'package:norma_machine/src/modules/home/views/components/register_values_card.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -38,6 +39,7 @@ class _HomeViewState extends PageState<HomeView, HomeController> {
               _buildIntervalDropdown(),
               _buildExampleSelector(),
               _buildClearButton(),
+              _buildLoadFileButton(), // Adiciona o botão de carregar arquivo
               _buildInputFields(),
               RegisterValuesCard(
                 registersNotifier: _viewModel.registersNotifier,
@@ -113,6 +115,49 @@ class _HomeViewState extends PageState<HomeView, HomeController> {
         },
         label: 'Limpar tudo e reiniciar',
       ),
+    );
+  }
+
+  Widget _buildLoadFileButton() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, bottom: 16),
+      child: ButtonPattern(
+        onPressed: () async {
+          bool permissionGranted = await _viewModel.loadFile();
+          if (!permissionGranted) {
+            _showPermissionDialog();
+          }
+          setState(() {});
+        },
+        label: 'Carregar arquivo',
+      ),
+    );
+  }
+
+  void _showPermissionDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Permissão necessária'),
+          content: const Text('Permissão para acessar arquivos foi negada. Por favor, conceda permissão nas configurações do aplicativo.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Abrir Configurações'),
+              onPressed: () {
+                openAppSettings();
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -1,6 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:norma_machine/src/modules/home/models/norma_machine.dart';
 import 'package:norma_machine/src/modules/home/models/register.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeViewModel {
   final TextEditingController memoryRegistersController = TextEditingController();
@@ -95,7 +100,7 @@ class HomeViewModel {
         "5": "if_zero(B) goto 7", // Se B == 0, vá para 7 (A == 0).
         "6": "goto 8", // Se A != 0, vá para 8 (A != B).
         "7": "add(resultado)", // Incrementa resultado.
-        "8": "end" // Fim do programa.ß
+        "8": "end" // Fim do programa.
       }
     },
     {
@@ -135,6 +140,65 @@ class HomeViewModel {
       _updateInputFields();
       _updateNotifiers();
     }
+  }
+
+  Future<bool> loadFile() async {
+    // Request permission to access files
+    if (await _requestPermission(Permission.storage)) {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json', 'txt'],
+      );
+
+      if (result != null) {
+        File file = File(result.files.single.path!);
+        String content = await file.readAsString();
+
+        Map<String, dynamic> example;
+        if (result.files.single.extension == 'txt') {
+          // Convert TXT content to JSON
+          example = _convertTxtToJson(content);
+        } else {
+          // Parse JSON content
+          example = jsonDecode(content);
+        }
+
+        clearAllFields();
+        _normaMachine.loadFromJson(example);
+        _updateInputFields();
+        _updateNotifiers();
+      }
+      return true;
+    } else {
+      // Permission denied, show error message
+      print('Permission to access files was denied.');
+      return false;
+    }
+  }
+
+  Future<bool> _requestPermission(Permission permission) async {
+    if (await permission.isGranted) {
+      return true;
+    } else {
+      var result = await permission.request();
+      if (result == PermissionStatus.granted) {
+        return true;
+      } else if (result == PermissionStatus.denied) {
+        print('Permission denied. Please grant permission in the app settings.');
+        return false;
+      } else if (result == PermissionStatus.permanentlyDenied) {
+        print('Permission permanently denied. Please grant permission in the app settings.');
+        openAppSettings();
+        return false;
+      }
+      return false;
+    }
+  }
+
+  Map<String, dynamic> _convertTxtToJson(String content) {
+    // Implement your logic to convert TXT content to JSON
+    // This is a placeholder implementation
+    return jsonDecode(content);
   }
 
   void clearAllFields() {
