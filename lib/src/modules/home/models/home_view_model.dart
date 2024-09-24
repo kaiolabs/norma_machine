@@ -26,7 +26,11 @@ class HomeViewModel {
   final List<Map<String, dynamic>> examples = [
     {
       "nome": "Soma de dois números",
-      "registradores": {"a": 9, "b": 11, "resultado": 0},
+      "registradores": {
+        "a": 9,
+        "b": 11,
+        "resultado": 0,
+      },
       "programa": {
         "1": "if_zero(a) goto 5",
         "2": "add(resultado)",
@@ -41,7 +45,10 @@ class HomeViewModel {
     },
     {
       "nome": "Contagem Regressiva",
-      "registradores": {"contador": 0, "limite": 5},
+      "registradores": {
+        "contador": 0,
+        "limite": 5,
+      },
       "programa": {
         "1": "if_zero(limite) goto 5",
         "2": "add(contador)",
@@ -52,7 +59,12 @@ class HomeViewModel {
     },
     {
       "nome": "Multiplicação de dois números",
-      "registradores": {"A": 8, "B": 8, "C": 0, "D": 0},
+      "registradores": {
+        "A": 8,
+        "B": 8,
+        "C": 0,
+        "D": 0,
+      },
       "programa": {
         "1": "if_zero(B) goto 12", // Se B == 0, vá para a instrução 12 (fim).
         "2": "sub(B)", // Decrementa B em 1.
@@ -70,21 +82,31 @@ class HomeViewModel {
     },
     {
       "nome": "Igualdade de dois números",
-      "registradores": {"A": 5, "B": 5, "resultado": 0},
+      "registradores": {
+        "A": 5,
+        "B": 5,
+        "resultado": 0,
+      },
       "programa": {
-        "1": "if_zero(A) goto 5",
-        "2": "sub(A)",
-        "3": "sub(B)",
-        "4": "goto 1",
-        "5": "if_zero(B) goto 7",
-        "6": "goto 8",
-        "7": "add(resultado)",
-        "8": "end"
+        "1": "if_zero(A) goto 5", // Se A == 0, vá para 5 (B == 0).
+        "2": "sub(A)", // Decrementa A.
+        "3": "sub(B)", // Decrementa B.
+        "4": "goto 1", // Volta para 1.
+        "5": "if_zero(B) goto 7", // Se B == 0, vá para 7 (A == 0).
+        "6": "goto 8", // Se A != 0, vá para 8 (A != B).
+        "7": "add(resultado)", // Incrementa resultado.
+        "8": "end" // Fim do programa.ß
       }
     },
     {
-      "nome": "Determinação do Maior Número entre Dois (Versão Final e Corrigida)",
-      "registradores": {"A": 8, "B": 5, "C": 0, "D": 8, "E": 5},
+      "nome": "Determinação o maior de dois números",
+      "registradores": {
+        "A": 8,
+        "B": 5,
+        "C": 0,
+        "D": 8,
+        "E": 5,
+      },
       "programa": {
         "1": "if_zero(A) goto 6", // Se A == 0, vá para 6 (B maior)
         "2": "if_zero(B) goto 10", // Se B == 0, vá para 10 (A maior)
