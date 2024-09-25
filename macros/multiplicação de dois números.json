@@ -1,0 +1,23 @@
+{
+	"nome": "Multiplicação de dois números",
+	"registradores": {
+		"A": 8,
+		"B": 8,
+		"C": 0,
+		"D": 0
+	},
+	"programa": {
+		"1": "if_zero(B) goto 12",
+		"2": "sub(B)",
+		"3": "if_zero(A) goto 7",
+		"4": "sub(A)",
+		"5": "add(D)",
+		"6": "goto 3",
+		"7": "if_zero(D) goto 1",
+		"8": "sub(D)",
+		"9": "add(C)",
+		"10": "add(A)",
+		"11": "goto 7",
+		"12": "end"
+	}
+}

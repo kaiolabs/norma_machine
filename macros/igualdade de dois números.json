@@ -1,0 +1,20 @@
+{
+	"nome": "Igualdade de dois números",
+	"registradores": {
+		"A": 5,
+		"B": 5,
+		"resultado": 1
+	},
+	"programa": {
+		"1": "if_zero(A) goto 6",
+		"2": "if_zero(B) goto 8",
+		"3": "sub(A)",
+		"4": "sub(B)",
+		"5": "goto 1",
+		"6": "if_zero(B) goto 10",
+		"7": "sub(resultado)",
+		"8": "if_zero(A) goto 10",
+		"9": "sub(resultado)",
+		"10": "end"
+	}
+}

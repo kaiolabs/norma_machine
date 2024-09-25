@@ -1,0 +1,16 @@
+nome: Igualdade de dois números
+registradores:
+A: 5
+B: 5
+resultado: 1
+programa:
+if_zero(A) goto 6
+if_zero(B) goto 8
+sub(A)
+sub(B)
+goto 1
+if_zero(B) goto 10
+sub(resultado)
+if_zero(A) goto 10
+sub(resultado)
+end

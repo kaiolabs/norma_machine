@@ -1,0 +1,19 @@
+{
+    "nome": "Soma de dois números",
+    "registradores": {
+      "a": 9,
+      "b": 11,
+      "resultado": 0
+    },
+    "programa": {
+      "1": "if_zero(a) goto 5",
+      "2": "add(resultado)",
+      "3": "sub(a)",
+      "4": "goto 1",
+      "5": "if_zero(b) goto 9",
+      "6": "add(resultado)",
+      "7": "sub(b)",
+      "8": "goto 5",
+      "9": "end"
+    }
+}

@@ -1,0 +1,22 @@
+nome: Determinação o maior de dois números
+registradores:
+A: 8
+B: 5
+C: 0
+D: 8
+E: 5
+programa:
+if_zero(A) goto 6
+if_zero(B) goto 10
+sub(A)
+sub(B)
+goto 1
+if_zero(E) goto 16
+add(C)
+sub(E)
+goto 6
+if_zero(D) goto 16
+add(C)
+sub(D)
+goto 10
+end

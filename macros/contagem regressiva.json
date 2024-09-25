@@ -1,0 +1,14 @@
+{
+	"nome": "Contagem Regressiva",
+	"registradores": {
+		"contador": 0,
+		"limite": 5
+	},
+	"programa": {
+		"1": "if_zero(limite) goto 5",
+		"2": "add(contador)",
+		"3": "sub(limite)",
+		"4": "goto 1",
+		"5": "end"
+	}
+}

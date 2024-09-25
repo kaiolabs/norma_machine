@@ -1,0 +1,15 @@
+nome: Soma de dois números
+registradores:
+a: 9
+b: 11
+resultado: 0
+programa:
+if_zero(a) goto 5
+add(resultado)
+sub(a)
+goto 1
+if_zero(b) goto 9
+add(resultado)
+sub(b)
+goto 5
+end

@@ -1,14 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ExecutionResultCard extends StatelessWidget {
   final ValueListenable<String> resultNotifier;
   final ScrollController resultScrollController;
+  final VoidCallback onCopyResult;
 
   const ExecutionResultCard({
     super.key,
     required this.resultNotifier,
     required this.resultScrollController,
+    required this.onCopyResult,
   });
 
   @override
@@ -27,12 +30,22 @@ class ExecutionResultCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Resultado',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Resultado',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.copy),
+                          onPressed: onCopyResult,
+                          tooltip: 'Copiar resultado',
+                        ),
+                      ],
                     ),
                     const Divider(),
                     Expanded(

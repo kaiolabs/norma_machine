@@ -47,6 +47,12 @@ class _HomeViewState extends PageState<HomeView, HomeController> {
               ExecutionResultCard(
                 resultNotifier: _viewModel.resultNotifier,
                 resultScrollController: _viewModel.resultScrollController,
+                onCopyResult: () {
+                  _viewModel.copyResultToClipboard();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Resultado copiado para a área de transferência')),
+                  );
+                },
               ),
               _buildStopButton(),
               _buildExecuteButton(),
@@ -120,7 +126,7 @@ class _HomeViewState extends PageState<HomeView, HomeController> {
 
   Widget _buildLoadFileButton() {
     return Padding(
-      padding: const EdgeInsets.only(top: 16, bottom: 16),
+      padding: const EdgeInsets.only(bottom: 16),
       child: ButtonPattern(
         onPressed: () async {
           bool permissionGranted = await _viewModel.loadFile();
@@ -164,6 +170,10 @@ class _HomeViewState extends PageState<HomeView, HomeController> {
   Widget _buildInputFields() {
     return Column(
       children: [
+        InputFieldPattern(
+          controller: _viewModel.programNameController,
+          label: 'Nome do Programa',
+        ),
         InputFieldPattern(
           controller: _viewModel.memoryRegistersController,
           label: 'Quantidade de registros de memória',

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:norma_machine/src/modules/home/models/norma_machine.dart';
 import 'package:norma_machine/src/modules/home/models/register.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -90,17 +91,19 @@ class HomeViewModel {
       "registradores": {
         "A": 5,
         "B": 5,
-        "resultado": 0,
+        "resultado": 1, // Inicia com 1, presumindo igualdade até prova contrária
       },
       "programa": {
-        "1": "if_zero(A) goto 5", // Se A == 0, vá para 5 (B == 0).
-        "2": "sub(A)", // Decrementa A.
-        "3": "sub(B)", // Decrementa B.
-        "4": "goto 1", // Volta para 1.
-        "5": "if_zero(B) goto 7", // Se B == 0, vá para 7 (A == 0).
-        "6": "goto 8", // Se A != 0, vá para 8 (A != B).
-        "7": "add(resultado)", // Incrementa resultado.
-        "8": "end" // Fim do programa.
+        "1": "if_zero(A) goto 6", // Se A for zero, verifica B
+        "2": "if_zero(B) goto 8", // Se B for zero, verifica A
+        "3": "sub(A)", // Decrementa A
+        "4": "sub(B)", // Decrementa B
+        "5": "goto 1", // Volta ao início para nova comparação
+        "6": "if_zero(B) goto 10", // Se A é zero e B também, são iguais
+        "7": "sub(resultado)", // Se A é zero mas B não, são diferentes
+        "8": "if_zero(A) goto 10", // Se B é zero e A também, são iguais
+        "9": "sub(resultado)", // Se B é zero mas A não, são diferentes
+        "10": "end" // Fim do programa
       }
     },
     {
@@ -126,24 +129,28 @@ class HomeViewModel {
         "11": "add(C)", // Incrementa C com 1 (copiar D para C)
         "12": "sub(D)", // Decrementa D em 1
         "13": "goto 10", // Continua copiando D para C
-        "16": "halt" // Fim do programa
+        "16": "end" // Fim do programa
       }
     },
   ];
 
+  final TextEditingController programNameController = TextEditingController();
+
   void loadExample(String? newValue) {
     if (newValue != null) {
-      selectedExample = newValue;
-      final example = examples[int.parse(newValue)];
-      clearAllFields();
-      _normaMachine.loadFromJson(example);
-      _updateInputFields();
-      _updateNotifiers();
+      int index = int.parse(newValue);
+      if (index >= 0 && index < examples.length) {
+        Map<String, dynamic> example = examples[index];
+        clearAllFields();
+        _normaMachine.loadFromJson(example);
+        _updateInputFields();
+        programNameController.text = example['nome'] ?? ''; // Atualiza o nome do programa
+        _updateNotifiers();
+      }
     }
   }
 
   Future<bool> loadFile() async {
-    // Request permission to access files
     if (await _requestPermission(Permission.storage)) {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
@@ -163,17 +170,22 @@ class HomeViewModel {
           example = jsonDecode(content);
         }
 
-        clearAllFields();
-        _normaMachine.loadFromJson(example);
-        _updateInputFields();
-        _updateNotifiers();
+        if (example.isNotEmpty) {
+          clearAllFields();
+          _normaMachine.loadFromJson(example);
+          _updateInputFields();
+          _updateNotifiers();
+          return true;
+        } else {
+          print('Failed to parse file content');
+          return false;
+        }
       }
-      return true;
     } else {
       // Permission denied, show error message
       print('Permission to access files was denied.');
-      return false;
     }
+    return false;
   }
 
   Future<bool> _requestPermission(Permission permission) async {
@@ -196,9 +208,42 @@ class HomeViewModel {
   }
 
   Map<String, dynamic> _convertTxtToJson(String content) {
-    // Implement your logic to convert TXT content to JSON
-    // This is a placeholder implementation
-    return jsonDecode(content);
+    Map<String, dynamic> example = {"nome": "", "registradores": {}, "programa": {}};
+    try {
+      List<String> lines = content.split('\n');
+      String currentSection = "";
+      int programCounter = 1;
+
+      for (String line in lines) {
+        line = line.trim();
+        if (line.isEmpty) continue;
+
+        if (line.toLowerCase().startsWith("nome:")) {
+          example["nome"] = line.substring(5).trim();
+        } else if (line.toLowerCase() == "registradores:") {
+          currentSection = "registradores";
+        } else if (line.toLowerCase() == "programa:") {
+          currentSection = "programa";
+        } else if (currentSection == "registradores") {
+          List<String> parts = line.split(':');
+          if (parts.length == 2) {
+            String key = parts[0].trim();
+            int? value = int.tryParse(parts[1].trim());
+            if (value != null) {
+              example["registradores"][key] = value;
+            }
+          }
+        } else if (currentSection == "programa") {
+          example["programa"][programCounter.toString()] = line;
+          programCounter++;
+        }
+      }
+
+      return example;
+    } catch (e) {
+      print('Error converting TXT to JSON: $e');
+      return {};
+    }
   }
 
   void clearAllFields() {
@@ -207,7 +252,10 @@ class HomeViewModel {
     registerValueController.clear();
     instructionsController.clear();
     resultController.clear();
+    programNameController.clear();
+
     _normaMachine.clear();
+
     _updateNotifiers();
   }
 
@@ -216,6 +264,7 @@ class HomeViewModel {
     registerNameController.text = registers.map((r) => r.name).join(',');
     registerValueController.text = registers.map((r) => r.value.toString()).join(',');
     instructionsController.text = _normaMachine.instructions.join('\n');
+    programNameController.text = _normaMachine.programName;
   }
 
   Future<void> executeInstructions() async {
@@ -253,8 +302,13 @@ class HomeViewModel {
     registersNotifier.value = List.from(_normaMachine.registers);
   }
 
+  void copyResultToClipboard() {
+    Clipboard.setData(ClipboardData(text: resultController.text));
+  }
+
   void dispose() {
     memoryRegistersController.dispose();
+    programNameController.dispose();
     registerNameController.dispose();
     registerValueController.dispose();
     instructionsController.dispose();

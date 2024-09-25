@@ -1,0 +1,19 @@
+nome: Multiplicação de dois números
+registradores:
+A: 8
+B: 8
+C: 0
+D: 0
+programa:
+if_zero(B) goto 12
+sub(B)
+if_zero(A) goto 7
+sub(A)
+add(D)
+goto 3
+if_zero(D) goto 1
+sub(D)
+add(C)
+add(A)
+goto 7
+end

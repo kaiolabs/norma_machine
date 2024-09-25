@@ -1,0 +1,10 @@
+nome: Contagem Regressiva
+registradores:
+contador: 0
+limite: 5
+programa:
+if_zero(limite) goto 5
+add(contador)
+sub(limite)
+goto 1
+end

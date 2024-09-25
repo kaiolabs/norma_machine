@@ -8,11 +8,13 @@ class NormaMachine {
   final List<String> _instructions = [];
   final List<String> _executionLog = [];
   bool _isExecuting = false;
+  String _programName = '';
 
   List<Register> get registers => List.unmodifiable(_registers);
   List<String> get instructions => List.unmodifiable(_instructions);
   List<String> get executionLog => List.unmodifiable(_executionLog);
   bool get isExecuting => _isExecuting;
+  String get programName => _programName;
 
   final InstructionInterpreter _interpreter = InstructionInterpreter();
 
@@ -68,6 +70,7 @@ class NormaMachine {
   }
 
   void loadFromJson(Map<String, dynamic> json) {
+    _programName = json['nome'] ?? '';
     _registers.clear();
     json['registradores'].forEach((key, value) {
       _registers.add(Register(name: key, value: int.tryParse(value.toString()) ?? 0));

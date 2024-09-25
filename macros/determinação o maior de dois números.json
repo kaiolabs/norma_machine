@@ -1,0 +1,26 @@
+{
+	"nome": "Determinação o maior de dois números",
+	"registradores": {
+		"A": 8,
+		"B": 5,
+		"C": 0,
+		"D": 8,
+		"E": 5
+	},
+	"programa": {
+		"1": "if_zero(A) goto 6",
+		"2": "if_zero(B) goto 10",
+		"3": "sub(A)",
+		"4": "sub(B)",
+		"5": "goto 1",
+		"6": "if_zero(E) goto 16",
+		"7": "add(C)",
+		"8": "sub(E)",
+		"9": "goto 6",
+		"10": "if_zero(D) goto 16",
+		"11": "add(C)",
+		"12": "sub(D)",
+		"13": "goto 10",
+		"16": "end"
+	}
+}
